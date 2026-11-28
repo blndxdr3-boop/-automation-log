@@ -1,1212 +1,298 @@
 <!DOCTYPE html>
 <html lang="ckb" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>تۆماری کاری ئەندازیاری ئۆتۆمەیشن | Automation Log</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <style>
-    :root {
-      --bg: #0b0f17;
-      --surface: #131a26;
-      --surface-2: #1b2434;
-      --border: #263248;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
-      --accent: #f59e0b;
-      --accent-hover: #d97706;
-      --cyan: #06b6d4;
-      --green: #10b981;
-      --red: #ef4444;
-      --blue: #3b82f6;
-      --radius: 14px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Vazirmatn', system-ui, sans-serif;
-    }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      line-height: 1.6;
-    }
-
-    .hidden { display: none !important; }
-
-    /* Login Screen */
-    #login-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: radial-gradient(circle at top right, rgba(245, 158, 11, 0.12), transparent 45%),
-                  radial-gradient(circle at bottom left, rgba(6, 182, 212, 0.1), transparent 45%),
-                  var(--bg);
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px 24px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    }
-
-    .brand-badge {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, var(--accent), #ea580c);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 26px;
-      margin: 0 auto 16px;
-      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);
-    }
-
-    .login-card h1 {
-      text-align: center;
-      font-size: 1.35rem;
-      margin-bottom: 6px;
-    }
-
-    .login-card p.sub {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.9rem;
-      margin-bottom: 24px;
-    }
-
-    /* Inputs & Buttons */
-    label {
-      display: block;
-      font-size: 0.85rem;
-      color: var(--muted);
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-
-    input, select, textarea {
-      width: 100%;
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 11px 14px;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 90px;
-    }
-
-    .form-group {
-      margin-bottom: 14px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 10px;
-      border: none;
-      font-size: 0.92rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: #0b0f17;
-    }
-    .btn-primary:hover { background: var(--accent-hover); }
-
-    .btn-secondary {
-      background: var(--surface-2);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-secondary:hover { border-color: var(--muted); }
-
-    .btn-pdf {
-      background: rgba(6, 182, 212, 0.15);
-      color: #22d3ee;
-      border: 1px solid rgba(6, 182, 212, 0.35);
-    }
-    .btn-pdf:hover { background: rgba(6, 182, 212, 0.25); }
-
-    .btn-danger {
-      background: rgba(239, 68, 68, 0.15);
-      color: #f87171;
-      border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-    .btn-danger:hover { background: rgba(239, 68, 68, 0.25); }
-
-    .btn-sm {
-      padding: 6px 11px;
-      font-size: 0.82rem;
-      border-radius: 8px;
-    }
-
-    .btn-full { width: 100%; }
-
-    .alert {
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      margin-bottom: 16px;
-    }
-    .alert-error {
-      background: rgba(239, 68, 68, 0.14);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #fca5a5;
-    }
-    .alert-success {
-      background: rgba(16, 185, 129, 0.14);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #6ee7b7;
-    }
-
-    /* App Layout */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: rgba(11, 15, 23, 0.88);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 18px;
-    }
-
-    .header-inner {
-      max-width: 1120px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .header-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .header-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--accent), #ea580c);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    .header-title h2 {
-      font-size: 1.05rem;
-      line-height: 1.25;
-    }
-
-    .header-title span {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    main {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 20px 16px 60px;
-    }
-
-    /* Stats */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-    }
-
-    .stat-label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .stat-val {
-      font-size: 1.5rem;
-      font-weight: 800;
-    }
-
-    /* Controls Bar */
-    .toolbar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr auto;
-      gap: 10px;
-      margin-bottom: 20px;
-      align-items: center;
-    }
-
-    /* Log Cards */
-    .logs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 14px;
-    }
-
-    .log-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      transition: transform 0.15s, border-color 0.2s;
-    }
-
-    .log-card:hover {
-      border-color: #3b4d6b;
-    }
-
-    .log-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-    }
-
-    .log-title {
-      font-size: 1.02rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .badge {
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .status-done { background: rgba(16, 185, 129, 0.16); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
-    .status-progress { background: rgba(59, 130, 246, 0.16); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-    .status-waiting { background: rgba(245, 158, 11, 0.16); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
-    .status-issue { background: rgba(239, 68, 68, 0.16); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
-
-    .log-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    .meta-pill {
-      background: var(--surface-2);
-      padding: 3px 9px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-    }
-
-    .log-section {
-      background: rgba(255, 255, 255, 0.02);
-      border-right: 3px solid var(--border);
-      padding: 8px 10px;
-      border-radius: 6px;
-      font-size: 0.87rem;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .log-section strong {
-      display: block;
-      font-size: 0.78rem;
-      color: var(--accent);
-      margin-bottom: 2px;
-    }
-
-    .log-actions {
-      margin-top: auto;
-      padding-top: 10px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .empty-state {
-      grid-column: 1 / -1;
-      text-align: center;
-      padding: 50px 20px;
-      background: var(--surface);
-      border: 1px dashed var(--border);
-      border-radius: var(--radius);
-      color: var(--muted);
-    }
-
-    /* Modals */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      backdrop-filter: blur(4px);
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 14px;
-      overflow-y: auto;
-    }
-
-    .modal {
-      width: 100%;
-      max-width: 680px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      max-height: 92vh;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-
-    .modal-lg { max-width: 860px; }
-
-    .modal-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .modal-body {
-      padding: 18px 20px;
-      overflow-y: auto;
-    }
-
-    .modal-footer {
-      padding: 14px 20px;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .form-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    /* PDF Paper Preview Area */
-    #pdf-paper {
-      background: #ffffff;
-      color: #111827;
-      padding: 28px;
-      border-radius: 8px;
-      direction: rtl;
-      font-family: 'Vazirmatn', sans-serif;
-    }
-
-    .pdf-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      border-bottom: 2px solid #1e293b;
-      padding-bottom: 14px;
-      margin-bottom: 18px;
-      gap: 12px;
-    }
-
-    .pdf-header h1 {
-      font-size: 1.25rem;
-      color: #0f172a;
-      margin-bottom: 4px;
-    }
-
-    .pdf-header p {
-      font-size: 0.82rem;
-      color: #475569;
-    }
-
-    .pdf-entry {
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 14px;
-      margin-bottom: 14px;
-      page-break-inside: avoid;
-    }
-
-    .pdf-entry-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
-      gap: 8px;
-    }
-
-    .pdf-entry-title {
-      font-size: 1rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
-
-    .pdf-status {
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 2px 10px;
-      border-radius: 999px;
-      background: #f1f5f9;
-      color: #0f172a;
-      border: 1px solid #cbd5e1;
-    }
-
-    .pdf-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 10px;
-      font-size: 0.84rem;
-    }
-
-    .pdf-field {
-      background: #f8fafc;
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #e2e8f0;
-    }
-
-    .pdf-field b {
-      color: #334155;
-      margin-left: 4px;
-    }
-
-    .pdf-block {
-      margin-top: 8px;
-      padding: 8px 10px;
-      background: #f8fafc;
-      border-right: 3px solid #f59e0b;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .pdf-block strong {
-      display: block;
-      font-size: 0.78rem;
-      color: #475569;
-      margin-bottom: 3px;
-    }
-
-    .pdf-footer {
-      margin-top: 18px;
-      padding-top: 10px;
-      border-top: 1px solid #cbd5e1;
-      text-align: center;
-      font-size: 0.75rem;
-      color: #64748b;
-    }
-
-    @media (max-width: 768px) {
-      .stats-grid { grid-template-columns: repeat(2, 1fr); }
-      .toolbar { grid-template-columns: 1fr; }
-      .form-grid-2 { grid-template-columns: 1fr; }
-      .pdf-grid { grid-template-columns: 1fr; }
-      #pdf-paper { padding: 16px; }
-    }
-
-    /* Print Mode Support */
-    @media print {
-      body * { visibility: hidden; }
-      #pdf-paper, #pdf-paper * { visibility: visible; }
-      #pdf-paper {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        padding: 0;
-        margin: 0;
-        border-radius: 0;
-      }
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>تۆماری کاری ئەندازیاری ئۆتۆمەیشن | Automation Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{--bg:#0b0f17;--surface:#131a26;--surface-2:#1b2434;--border:#263248;--text:#f1f5f9;--muted:#94a3b8;--accent:#f59e0b;--accent-hover:#d97706;--cyan:#06b6d4;--green:#10b981;--red:#ef4444;--blue:#3b82f6;--radius:14px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Vazirmatn',system-ui,sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+.hidden{display:none!important}
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at top right,rgba(245,158,11,.12),transparent 45%),radial-gradient(circle at bottom left,rgba(6,182,212,.1),transparent 45%),var(--bg)}
+.login-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 24px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.brand-badge{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#ea580c);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 16px;box-shadow:0 8px 24px rgba(245,158,11,.25)}
+.login-card h1{text-align:center;font-size:1.35rem;margin-bottom:6px}
+.login-card p.sub{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:24px}
+label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px;font-weight:500}
+input,select,textarea{width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);padding:11px 14px;border-radius:10px;font-size:.95rem;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(245,158,11,.15)}
+textarea{resize:vertical;min-height:90px}
+.form-group{margin-bottom:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:10px;border:none;font-size:.92rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#0b0f17}.btn-primary:hover{background:var(--accent-hover)}
+.btn-secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{border-color:var(--muted)}
+.btn-pdf{background:rgba(6,182,212,.15);color:#22d3ee;border:1px solid rgba(6,182,212,.35)}.btn-pdf:hover{background:rgba(6,182,212,.25)}
+.btn-danger{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.3)}.btn-danger:hover{background:rgba(239,68,68,.25)}
+.btn-sm{padding:6px 11px;font-size:.82rem;border-radius:8px}.btn-full{width:100%}
+.alert{padding:12px 14px;border-radius:10px;font-size:.88rem;margin-bottom:16px}
+.alert-error{background:rgba(239,68,68,.14);border:1px solid rgba(239,68,68,.35);color:#fca5a5}
+.alert-success{background:rgba(16,185,129,.14);border:1px solid rgba(16,185,129,.35);color:#6ee7b7}
+header{position:sticky;top:0;z-index:20;background:rgba(11,15,23,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:14px 18px}
+.header-inner{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.header-title{display:flex;align-items:center;gap:10px}
+.header-icon{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ea580c);display:flex;align-items:center;justify-content:center;font-size:18px}
+.header-title h2{font-size:1.05rem;line-height:1.25}.header-title span{font-size:.78rem;color:var(--muted)}
+.header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+main{max-width:1120px;margin:0 auto;padding:20px 16px 60px}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card,.toolbar,.log-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.stat-card{padding:14px 16px}.stat-label{font-size:.8rem;color:var(--muted);margin-bottom:4px}.stat-val{font-size:1.5rem;font-weight:800}
+.toolbar{padding:14px;display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:10px;margin-bottom:20px;align-items:center}
+.logs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.log-card{padding:16px;display:flex;flex-direction:column;gap:10px;transition:transform .15s,border-color .2s}.log-card:hover{border-color:#3b4d6b}
+.log-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}.log-title{font-size:1.02rem;font-weight:700;color:var(--text)}
+.badge{padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:600;white-space:nowrap}
+.status-done{background:rgba(16,185,129,.16);color:#34d399;border:1px solid rgba(16,185,129,.3)}
+.status-progress{background:rgba(59,130,246,.16);color:#60a5fa;border:1px solid rgba(59,130,246,.3)}
+.status-waiting{background:rgba(245,158,11,.16);color:#fbbf24;border:1px solid rgba(245,158,11,.3)}
+.status-issue{background:rgba(239,68,68,.16);color:#f87171;border:1px solid rgba(239,68,68,.3)}
+.log-meta{display:flex;flex-wrap:wrap;gap:8px;font-size:.8rem;color:var(--muted)}
+.meta-pill{background:var(--surface-2);padding:3px 9px;border-radius:6px;border:1px solid var(--border)}
+.log-section{background:rgba(255,255,255,.02);border-right:3px solid var(--border);padding:8px 10px;border-radius:6px;font-size:.87rem;white-space:pre-wrap;word-break:break-word}
+.log-section strong{display:block;font-size:.78rem;color:var(--accent);margin-bottom:2px}
+.log-actions{margin-top:auto;padding-top:10px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap}
+.empty-state{grid-column:1/-1;text-align:center;padding:50px 20px;background:var(--surface);border:1px dashed var(--border);border-radius:var(--radius);color:var(--muted)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:14px;overflow-y:auto}
+.modal{width:100%;max-width:680px;background:var(--surface);border:1px solid var(--border);border-radius:18px;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}.modal-lg{max-width:860px}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.modal-body{padding:18px 20px;overflow-y:auto}
+.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+#pdf-paper{background:#fff;color:#111827;padding:28px;border-radius:8px;direction:rtl;font-family:'Vazirmatn',sans-serif}
+.pdf-header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #1e293b;padding-bottom:14px;margin-bottom:18px;gap:12px}
+.pdf-header h1{font-size:1.25rem;color:#0f172a;margin-bottom:4px}.pdf-header p{font-size:.82rem;color:#475569}
+.pdf-entry{border:1px solid #cbd5e1;border-radius:8px;padding:14px;margin-bottom:14px;page-break-inside:avoid}
+.pdf-entry-head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:8px;margin-bottom:10px;gap:8px}
+.pdf-entry-title{font-size:1rem;font-weight:700;color:#0f172a}
+.pdf-status{font-size:.78rem;font-weight:700;padding:2px 10px;border-radius:999px;background:#f1f5f9;color:#0f172a;border:1px solid #cbd5e1}
+.pdf-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px;font-size:.84rem}
+.pdf-field{background:#f8fafc;padding:6px 10px;border-radius:6px;border:1px solid #e2e8f0}.pdf-field b{color:#334155;margin-left:4px}
+.pdf-block{margin-top:8px;padding:8px 10px;background:#f8fafc;border-right:3px solid #f59e0b;border-radius:4px;font-size:.85rem;white-space:pre-wrap;word-break:break-word}
+.pdf-block strong{display:block;font-size:.78rem;color:#475569;margin-bottom:3px}
+.pdf-footer{margin-top:18px;padding-top:10px;border-top:1px solid #cbd5e1;text-align:center;font-size:.75rem;color:#64748b}
+@media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr)}.toolbar,.form-grid-2,.pdf-grid{grid-template-columns:1fr}#pdf-paper{padding:16px}}
+@media print{body *{visibility:hidden}#pdf-paper,#pdf-paper *{visibility:visible}#pdf-paper{position:absolute;inset:0;width:100%;padding:0;margin:0;border-radius:0}}
+</style>
 </head>
 <body>
-
-  <!-- Login Screen -->
-  <section id="login-screen">
-    <div class="login-card">
-      <div class="brand-badge">⚙️</div>
-      <h1>تۆماری ئەندازیاری ئۆتۆمەیشن</h1>
-      <p class="sub">چوونەژوورەوە بۆ بینین و تۆمارکردنی کارە تەکنیکییەکان</p>
-      <div id="login-error" class="alert alert-error hidden"></div>
-      <form id="login-form">
-        <div class="form-group">
-          <label for="login-email">ئیمەیڵ</label>
-          <input type="email" id="login-email" placeholder="engineer@log.com" required autocomplete="email" dir="ltr" />
-        </div>
-        <div class="form-group">
-          <label for="login-password">وشەی نهێنی</label>
-          <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password" dir="ltr" />
-        </div>
-        <button type="submit" id="login-btn" class="btn btn-primary btn-full">چوونەژوورەوە</button>
-      </form>
-    </div>
-  </section>
-
-  <!-- Main App -->
-  <div id="app-screen" class="hidden">
-    <header>
-      <div class="header-inner">
-        <div class="header-title">
-          <div class="header-icon">⚙️</div>
-          <div>
-            <h2>تۆماری کاری ئۆتۆمەیشن</h2>
-            <span id="user-email-display"></span>
-          </div>
-        </div>
-        <div class="header-actions">
-          <button id="btn-open-add" class="btn btn-primary">+ تۆماری نوێ</button>
-          <button id="btn-export-all-pdf" class="btn btn-pdf">📄 PDFـی هەموو کارەکان</button>
-          <button id="btn-logout" class="btn btn-secondary">دەرچوون</button>
-        </div>
-      </div>
-    </header>
-
-    <main>
-      <div id="app-alert" class="alert hidden"></div>
-
-      <!-- Statistics -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">کۆی تۆمارەکان</div>
-          <div class="stat-val" id="stat-total">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">تەواوبوو</div>
-          <div class="stat-val" id="stat-done" style="color: var(--green);">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">لە کاردایە / چاوەڕێی پارچە</div>
-          <div class="stat-val" id="stat-active" style="color: var(--accent);">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">کێشەی هەیە</div>
-          <div class="stat-val" id="stat-issue" style="color: var(--red);">0</div>
-        </div>
-      </div>
-
-      <!-- Search & Filters -->
-      <div class="toolbar">
-        <input type="text" id="search-input" placeholder="گەڕان بەدوای کارگە، ناونیشان، مۆدێلی PLC، کێشە یان چارەسەر..." />
-        <select id="filter-system">
-          <option value="">هەموو سیستەمەکان</option>
-          <option value="PLC">PLC</option>
-          <option value="HMI / SCADA">HMI / SCADA</option>
-          <option value="Inverter / VFD">Inverter / VFD</option>
-          <option value="تابڵۆی کارەبا">تابڵۆی کارەبا</option>
-          <option value="هەستەوەر و وایەرینگ">هەستەوەر و وایەرینگ</option>
-          <option value="ماتۆڕ و ستارتەر">ماتۆڕ و ستارتەر</option>
-          <option value="چاککردنەوە و سێرڤس">چاککردنەوە و سێرڤس</option>
-          <option value="هی تر">هی تر</option>
-        </select>
-        <select id="filter-status">
-          <option value="">هەموو دۆخەکان</option>
-          <option value="تەواوبوو">تەواوبوو</option>
-          <option value="لە کاردایە">لە کاردایە</option>
-          <option value="چاوەڕێی پارچە">چاوەڕێی پارچە</option>
-          <option value="کێشەی هەیە">کێشەی هەیە</option>
-        </select>
-        <button id="btn-clear-filters" class="btn btn-secondary">پاککردنەوە</button>
-      </div>
-
-      <!-- Logs Container -->
-      <div id="logs-container" class="logs-grid">
-        <div class="empty-state">بارکردنی زانیارییەکان لە هەورەوە...</div>
-      </div>
-    </main>
+<section id="login-screen">
+  <div class="login-card">
+    <div class="brand-badge">⚙️</div>
+    <h1>تۆماری ئەندازیاری ئۆتۆمەیشن</h1>
+    <p class="sub">چوونەژوورەوە بۆ بینین و تۆمارکردنی کارە تەکنیکییەکان</p>
+    <div id="login-error" class="alert alert-error hidden"></div>
+    <form id="login-form">
+      <div class="form-group"><label for="login-email">ئیمەیڵ</label><input type="email" id="login-email" placeholder="engineer@log.com" required autocomplete="email" dir="ltr"/></div>
+      <div class="form-group"><label for="login-password">وشەی نهێنی</label><input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password" dir="ltr"/></div>
+      <button type="submit" id="login-btn" class="btn btn-primary btn-full">چوونەژوورەوە</button>
+    </form>
   </div>
+</section>
 
-  <!-- Add / Edit Log Modal -->
-  <div id="log-modal" class="modal-backdrop hidden">
-    <div class="modal">
-      <div class="modal-header">
-        <h3 id="modal-title">تۆمارکردنی کاری نوێ</h3>
-        <button id="btn-close-modal" class="btn btn-secondary btn-sm">✕</button>
-      </div>
-      <form id="log-form" class="modal-body">
-        <input type="hidden" id="edit-id" />
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label for="f-title">ناونیشانی کار / پڕۆژە *</label>
-            <input type="text" id="f-title" placeholder="نموونە: بەرنامەڕێژیی PLCـی هۆڵی ١" required />
-          </div>
-          <div class="form-group">
-            <label for="f-site">ناوی کارگە / شوێن / کڕیار *</label>
-            <input type="text" id="f-site" placeholder="نموونە: کارگەی ئاسن - هەولێر" required />
-          </div>
-        </div>
-
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label for="f-date">بەروار *</label>
-            <input type="date" id="f-date" required />
-          </div>
-          <div class="form-group">
-            <label for="f-system">جۆری سیستەم</label>
-            <select id="f-system">
-              <option value="PLC">PLC</option>
-              <option value="HMI / SCADA">HMI / SCADA</option>
-              <option value="Inverter / VFD">Inverter / VFD</option>
-              <option value="تابڵۆی کارەبا">تابڵۆی کارەبا</option>
-              <option value="هەستەوەر و وایەرینگ">هەستەوەر و وایەرینگ</option>
-              <option value="ماتۆڕ و ستارتەر">ماتۆڕ و ستارتەر</option>
-              <option value="چاککردنەوە و سێرڤس">چاککردنەوە و سێرڤس</option>
-              <option value="هی تر">هی تر</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-grid-2">
-          <div class="form-group">
-            <label for="f-brand">براند و مۆدێلی ئامێر</label>
-            <input type="text" id="f-brand" placeholder="نموونە: Siemens S7-1200 / Delta VFD" />
-          </div>
-          <div class="form-group">
-            <label for="f-status">دۆخی کار</label>
-            <select id="f-status">
-              <option value="تەواوبوو">تەواوبوو</option>
-              <option value="لە کاردایە">لە کاردایە</option>
-              <option value="چاوەڕێی پارچە">چاوەڕێی پارچە</option>
-              <option value="کێشەی هەیە">کێشەی هەیە</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="f-details">وردەکاریی کار و کێشە تەکنیکییەکان (I/O، IP، کۆدی هەڵە...)</label>
-          <textarea id="f-details" placeholder="وردەکاریی تەکنیکی، ناونیشانی IP، یان جۆری کێشەکە لێرە بنووسە..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="f-solution">چارەسەر و پارچە گۆڕدراوەکان</label>
-          <textarea id="f-solution" placeholder="ئەو کارەی ئەنجام دراوە یان ئەو پارچانەی گۆڕدراون..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="f-notes">تێبینی و کاری داهاتوو</label>
-          <input type="text" id="f-notes" placeholder="نموونە: وەرگرتنی باکئەپ لە سەردانی داهاتوودا..." />
-        </div>
-
-        <div class="modal-footer" style="padding: 14px 0 0; border-top: 1px solid var(--border);">
-          <button type="button" id="btn-cancel-modal" class="btn btn-secondary">پاشگەزبوونەوە</button>
-          <button type="submit" id="btn-save-log" class="btn btn-primary">خەزنکردن لە هەور</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- PDF Preview & Download Modal -->
-  <div id="pdf-modal" class="modal-backdrop hidden">
-    <div class="modal modal-lg">
-      <div class="modal-header">
-        <h3>پێشبینین و داگرتنی فایلی PDF</h3>
-        <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button id="btn-download-pdf" class="btn btn-primary btn-sm">⬇️ داگرتنی فایلی PDF</button>
-          <button id="btn-print-pdf" class="btn btn-secondary btn-sm">🖨️ چاپکردن</button>
-          <button id="btn-close-pdf" class="btn btn-secondary btn-sm">✕</button>
-        </div>
-      </div>
-      <div class="modal-body" style="background: #1e293b;">
-        <div id="pdf-paper"></div>
+<div id="app-screen" class="hidden">
+  <header>
+    <div class="header-inner">
+      <div class="header-title"><div class="header-icon">⚙️</div><div><h2>تۆماری کاری ئۆتۆمەیشن</h2><span id="user-email-display"></span></div></div>
+      <div class="header-actions">
+        <button id="btn-open-add" class="btn btn-primary">+ تۆماری نوێ</button>
+        <button id="btn-export-all-pdf" class="btn btn-pdf">📄 PDFـی هەموو کارەکان</button>
+        <button id="btn-logout" class="btn btn-secondary">دەرچوون</button>
       </div>
     </div>
+  </header>
+  <main>
+    <div id="app-alert" class="alert hidden"></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">کۆی تۆمارەکان</div><div class="stat-val" id="stat-total">0</div></div>
+      <div class="stat-card"><div class="stat-label">تەواوبوو</div><div class="stat-val" id="stat-done" style="color:var(--green)">0</div></div>
+      <div class="stat-card"><div class="stat-label">لە کاردایە / چاوەڕێی پارچە</div><div class="stat-val" id="stat-active" style="color:var(--accent)">0</div></div>
+      <div class="stat-card"><div class="stat-label">کێشەی هەیە</div><div class="stat-val" id="stat-issue" style="color:var(--red)">0</div></div>
+    </div>
+    <div class="toolbar">
+      <input type="text" id="search-input" placeholder="گەڕان بەدوای کارگە، ناونیشان، مۆدێلی PLC، کێشە یان چارەسەر..."/>
+      <select id="filter-system"><option value="">هەموو سیستەمەکان</option><option>PLC</option><option>HMI / SCADA</option><option>Inverter / VFD</option><option>تابڵۆی کارەبا</option><option>هەستەوەر و وایەرینگ</option><option>ماتۆڕ و ستارتەر</option><option>چاککردنەوە و سێرڤس</option><option>هی تر</option></select>
+      <select id="filter-status"><option value="">هەموو دۆخەکان</option><option>تەواوبوو</option><option>لە کاردایە</option><option>چاوەڕێی پارچە</option><option>کێشەی هەیە</option></select>
+      <button id="btn-clear-filters" class="btn btn-secondary">پاککردنەوە</button>
+    </div>
+    <div id="logs-container" class="logs-grid"><div class="empty-state">بارکردنی زانیارییەکان لە هەورەوە...</div></div>
+  </main>
+</div>
+
+<div id="log-modal" class="modal-backdrop hidden">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modal-title">تۆمارکردنی کاری نوێ</h3><button id="btn-close-modal" class="btn btn-secondary btn-sm">✕</button></div>
+    <form id="log-form" class="modal-body">
+      <input type="hidden" id="edit-id"/>
+      <div class="form-grid-2">
+        <div class="form-group"><label for="f-title">ناونیشانی کار / پڕۆژە *</label><input type="text" id="f-title" placeholder="نموونە: بەرنامەڕێژیی PLCـی هۆڵی ١" required/></div>
+        <div class="form-group"><label for="f-site">ناوی کارگە / شوێن / کڕیار *</label><input type="text" id="f-site" placeholder="نموونە: کارگەی ئاسن - هەولێر" required/></div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group"><label for="f-date">بەروار *</label><input type="date" id="f-date" required/></div>
+        <div class="form-group"><label for="f-system">جۆری سیستەم</label><select id="f-system"><option>PLC</option><option>HMI / SCADA</option><option>Inverter / VFD</option><option>تابڵۆی کارەبا</option><option>هەستەوەر و وایەرینگ</option><option>ماتۆڕ و ستارتەر</option><option>چاککردنەوە و سێرڤس</option><option>هی تر</option></select></div>
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group"><label for="f-brand">براند و مۆدێلی ئامێر</label><input type="text" id="f-brand" placeholder="نموونە: Siemens S7-1200 / Delta VFD"/></div>
+        <div class="form-group"><label for="f-status">دۆخی کار</label><select id="f-status"><option>تەواوبوو</option><option>لە کاردایە</option><option>چاوەڕێی پارچە</option><option>کێشەی هەیە</option></select></div>
+      </div>
+      <div class="form-group"><label for="f-details">وردەکاریی کار و کێشە تەکنیکییەکان (I/O، IP، کۆدی هەڵە...)</label><textarea id="f-details" placeholder="وردەکاریی تەکنیکی، ناونیشانی IP، یان جۆری کێشەکە لێرە بنووسە..."></textarea></div>
+      <div class="form-group"><label for="f-solution">چارەسەر و پارچە گۆڕدراوەکان</label><textarea id="f-solution" placeholder="ئەو کارەی ئەنجام دراوە یان ئەو پارچانەی گۆڕدراون..."></textarea></div>
+      <div class="form-group"><label for="f-notes">تێبینی و کاری داهاتوو</label><input type="text" id="f-notes" placeholder="نموونە: وەرگرتنی باکئەپ لە سەردانی داهاتوودا..."/></div>
+      <div class="modal-footer" style="padding:14px 0 0;border-top:1px solid var(--border)">
+        <button type="button" id="btn-cancel-modal" class="btn btn-secondary">پاشگەزبوونەوە</button>
+        <button type="submit" id="btn-save-log" class="btn btn-primary">خەزنکردن لە هەور</button>
+      </div>
+    </form>
   </div>
+</div>
 
-  <!-- Firebase App Logic -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      signOut,
-      onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      updateDoc,
-      deleteDoc,
-      doc,
-      onSnapshot,
-      query,
-      orderBy
-    } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+<div id="pdf-modal" class="modal-backdrop hidden">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3>پێشبینین و داگرتنی فایلی PDF</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="btn-download-pdf" class="btn btn-primary btn-sm">⬇️ داگرتنی فایلی PDF</button>
+        <button id="btn-print-pdf" class="btn btn-secondary btn-sm">🖨️ چاپکردن</button>
+        <button id="btn-close-pdf" class="btn btn-secondary btn-sm">✕</button>
+      </div>
+    </div>
+    <div class="modal-body" style="background:#1e293b"><div id="pdf-paper"></div></div>
+  </div>
+</div>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAfeWmyFrBlrbhe1QXzn6Z2HkyXYGPzIgk",
-      authDomain: "automation-log-51eb0.firebaseapp.com",
-      projectId: "automation-log-51eb0",
-      storageBucket: "automation-log-51eb0.firebasestorage.app",
-      messagingSenderId: "789842627220",
-      appId: "1:789842627220:web:162e73ac105681bd890281",
-      measurementId: "G-PN7LPZ3HME"
-    };
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{getFirestore,collection,addDoc,updateDoc,deleteDoc,doc,onSnapshot,query,orderBy}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-    const logsRef = collection(db, "automation_logs");
+const app=initializeApp({apiKey:"AIzaSyAfeWmyFrBlrbhe1QXzn6Z2HkyXYGPzIgk",authDomain:"automation-log-51eb0.firebaseapp.com",projectId:"automation-log-51eb0",storageBucket:"automation-log-51eb0.firebasestorage.app",messagingSenderId:"789842627220",appId:"1:789842627220:web:162e73ac105681bd890281",measurementId:"G-PN7LPZ3HME"});
+const auth=getAuth(app),db=getFirestore(app),logsRef=collection(db,"automation_logs");
+const $=id=>document.getElementById(id),FIELDS=["title","site","date","system","brand","status","details","solution","notes"];
+const SC={"تەواوبوو":"status-done","لە کاردایە":"status-progress","چاوەڕێی پارچە":"status-waiting"};
+const esc=s=>s?String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"})[m]):"";
+const todayISO=()=>new Date().toISOString().split("T")[0];
+let allLogs=[],unsub=null,pdfName="automation-report.pdf";
 
-    let allLogs = [];
-    let unsubscribeLogs = null;
-    let currentPdfFilename = "automation-report.pdf";
+function showAlert(msg,type="success"){
+  const el=$("app-alert");el.textContent=msg;el.className=`alert alert-${type}`;
+  if(type==="success")setTimeout(()=>el.classList.add("hidden"),3500);
+}
 
-    // DOM Elements
-    const loginScreen = document.getElementById("login-screen");
-    const appScreen = document.getElementById("app-screen");
-    const loginForm = document.getElementById("login-form");
-    const loginError = document.getElementById("login-error");
-    const loginBtn = document.getElementById("login-btn");
-    const userEmailDisplay = document.getElementById("user-email-display");
-    const appAlert = document.getElementById("app-alert");
+$("login-form").addEventListener("submit",async e=>{
+  e.preventDefault();$("login-error").classList.add("hidden");
+  const btn=$("login-btn");btn.disabled=true;btn.textContent="چاوەڕێ بە...";
+  try{await signInWithEmailAndPassword(auth,$("login-email").value.trim(),$("login-password").value);}
+  catch{$("login-error").textContent="ئیمەیڵ یان وشەی نهێنی هەڵەیە، تکایە دڵنیابەرەوە و دووبارە هەوڵ بدە.";$("login-error").classList.remove("hidden");}
+  finally{btn.disabled=false;btn.textContent="چوونەژوورەوە";}
+});
 
-    const logsContainer = document.getElementById("logs-container");
-    const searchInput = document.getElementById("search-input");
-    const filterSystem = document.getElementById("filter-system");
-    const filterStatus = document.getElementById("filter-status");
+$("btn-logout").onclick=()=>signOut(auth);
 
-    const logModal = document.getElementById("log-modal");
-    const logForm = document.getElementById("log-form");
-    const modalTitle = document.getElementById("modal-title");
-    const editIdInput = document.getElementById("edit-id");
-    const btnSaveLog = document.getElementById("btn-save-log");
-
-    const pdfModal = document.getElementById("pdf-modal");
-    const pdfPaper = document.getElementById("pdf-paper");
-    const btnDownloadPdf = document.getElementById("btn-download-pdf");
-
-    // Helpers
-    function escapeHtml(str) {
-      if (!str) return "";
-      return String(str)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
-
-    function showAlert(msg, type = "success") {
-      appAlert.textContent = msg;
-      appAlert.className = `alert ${type === "error" ? "alert-error" : "alert-success"}`;
-      appAlert.classList.remove("hidden");
-      if (type === "success") {
-        setTimeout(() => appAlert.classList.add("hidden"), 3500);
-      }
-    }
-
-    function getStatusClass(status) {
-      if (status === "تەواوبوو") return "status-done";
-      if (status === "لە کاردایە") return "status-progress";
-      if (status === "چاوەڕێی پارچە") return "status-waiting";
-      return "status-issue";
-    }
-
-    function getTodayISO() {
-      const now = new Date();
-      return now.toISOString().split("T")[0];
-    }
-
-    // Auth Handling
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      loginError.classList.add("hidden");
-      loginBtn.disabled = true;
-      loginBtn.textContent = "چاوەڕێ بە...";
-
-      const email = document.getElementById("login-email").value.trim();
-      const password = document.getElementById("login-password").value;
-
-      try {
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (err) {
-        loginError.textContent = "ئیمەیڵ یان وشەی نهێنی هەڵەیە، تکایە دڵنیابەرەوە و دووبارە هەوڵ بدە.";
-        loginError.classList.remove("hidden");
-      } finally {
-        loginBtn.disabled = false;
-        loginBtn.textContent = "چوونەژوورەوە";
-      }
-    });
-
-    document.getElementById("btn-logout").addEventListener("click", async () => {
-      await signOut(auth);
-    });
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loginScreen.classList.add("hidden");
-        appScreen.classList.remove("hidden");
-        userEmailDisplay.textContent = user.email;
-        startListeningLogs();
-      } else {
-        if (unsubscribeLogs) {
-          unsubscribeLogs();
-          unsubscribeLogs = null;
-        }
-        allLogs = [];
-        appScreen.classList.add("hidden");
-        loginScreen.classList.remove("hidden");
-      }
-    });
-
-    // Firestore Realtime Listener
-    function startListeningLogs() {
-      const q = query(logsRef, orderBy("createdAt", "desc"));
-      unsubscribeLogs = onSnapshot(
-        q,
-        (snapshot) => {
-          allLogs = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-          updateStats();
-          renderLogs();
-        },
-        (error) => {
-          console.error(error);
-          if (error.code === "permission-denied") {
-            showAlert("کێشەی مۆڵەتی بنکەدراوە (Rules): تکایە لە Firebase بەشی Firestore > Rules دڵنیابە لەوەی allow read, write: if request.auth != null; دانراوە.", "error");
-          } else {
-            showAlert("کێشەیەک لە پەیوەندی بە بنکەدراوە ڕوویدا: " + error.message, "error");
-          }
-          logsContainer.innerHTML = `<div class="empty-state">نەتوانرا زانیارییەکان بهێنرێن.</div>`;
-        }
-      );
-    }
-
-    function updateStats() {
-      document.getElementById("stat-total").textContent = allLogs.length;
-      document.getElementById("stat-done").textContent = allLogs.filter(l => l.status === "تەواوبوو").length;
-      document.getElementById("stat-active").textContent = allLogs.filter(l => l.status === "لە کاردایە" || l.status === "چاوەڕێی پارچە").length;
-      document.getElementById("stat-issue").textContent = allLogs.filter(l => l.status === "کێشەی هەیە").length;
-    }
-
-    function getFilteredLogs() {
-      const q = searchInput.value.trim().toLowerCase();
-      const sys = filterSystem.value;
-      const st = filterStatus.value;
-
-      return allLogs.filter((log) => {
-        const matchesSystem = !sys || log.system === sys;
-        const matchesStatus = !st || log.status === st;
-        const combined = [log.title, log.site, log.brand, log.details, log.solution, log.notes, log.date]
-          .join(" ")
-          .toLowerCase();
-        const matchesSearch = !q || combined.includes(q);
-        return matchesSystem && matchesStatus && matchesSearch;
-      });
-    }
-
-    function renderLogs() {
-      const filtered = getFilteredLogs();
-      if (filtered.length === 0) {
-        logsContainer.innerHTML = `
-          <div class="empty-state">
-            ${allLogs.length === 0
-              ? "هێشتا هیچ کارێک تۆمار نەکراوە. کلیک لە (+ تۆماری نوێ) بکە بۆ دەستپێکردن."
-              : "هیچ تۆمارێک لەگەڵ گەڕانەکەت ناگونجێت."}
-          </div>`;
-        return;
-      }
-
-      logsContainer.innerHTML = filtered.map((log) => `
-        <article class="log-card" data-id="${escapeHtml(log.id)}">
-          <div class="log-top">
-            <div class="log-title">${escapeHtml(log.title)}</div>
-            <span class="badge ${getStatusClass(log.status)}">${escapeHtml(log.status)}</span>
-          </div>
-
-          <div class="log-meta">
-            <span class="meta-pill">📍 ${escapeHtml(log.site)}</span>
-            <span class="meta-pill">📅 ${escapeHtml(log.date)}</span>
-            <span class="meta-pill">⚡ ${escapeHtml(log.system)}</span>
-            ${log.brand ? `<span class="meta-pill">🔧 ${escapeHtml(log.brand)}</span>` : ""}
-          </div>
-
-          ${log.details ? `
-            <div class="log-section">
-              <strong>وردەکاری و کێشە:</strong>
-              ${escapeHtml(log.details)}
-            </div>` : ""}
-
-          ${log.solution ? `
-            <div class="log-section" style="border-right-color: var(--green);">
-              <strong style="color: var(--green);">چارەسەر و پارچە گۆڕدراوەکان:</strong>
-              ${escapeHtml(log.solution)}
-            </div>` : ""}
-
-          ${log.notes ? `
-            <div class="log-section" style="border-right-color: var(--cyan);">
-              <strong style="color: var(--cyan);">تێبینی:</strong>
-              ${escapeHtml(log.notes)}
-            </div>` : ""}
-
-          <div class="log-actions">
-            <button class="btn btn-pdf btn-sm action-pdf">📄 PDF</button>
-            <button class="btn btn-secondary btn-sm action-edit">✏️ دەستکاری</button>
-            <button class="btn btn-danger btn-sm action-delete">🗑️ سڕینەوە</button>
-          </div>
-        </article>
-      `).join("");
-    }
-
-    // Filter events
-    searchInput.addEventListener("input", renderLogs);
-    filterSystem.addEventListener("change", renderLogs);
-    filterStatus.addEventListener("change", renderLogs);
-    document.getElementById("btn-clear-filters").addEventListener("click", () => {
-      searchInput.value = "";
-      filterSystem.value = "";
-      filterStatus.value = "";
+onAuthStateChanged(auth,user=>{
+  if(user){
+    $("login-screen").classList.add("hidden");$("app-screen").classList.remove("hidden");
+    $("user-email-display").textContent=user.email;
+    unsub=onSnapshot(query(logsRef,orderBy("createdAt","desc")),snap=>{
+      allLogs=snap.docs.map(d=>({id:d.id,...d.data()}));
+      $("stat-total").textContent=allLogs.length;
+      $("stat-done").textContent=allLogs.filter(l=>l.status==="تەواوبوو").length;
+      $("stat-active").textContent=allLogs.filter(l=>l.status==="لە کاردایە"||l.status==="چاوەڕێی پارچە").length;
+      $("stat-issue").textContent=allLogs.filter(l=>l.status==="کێشەی هەیە").length;
       renderLogs();
+    },err=>{
+      console.error(err);
+      showAlert(err.code==="permission-denied"?"کێشەی مۆڵەتی بنکەدراوە (Rules): تکایە لە Firebase بەشی Firestore > Rules دڵنیابە لەوەی allow read, write: if request.auth != null; دانراوە.":"کێشەیەک لە پەیوەندی بە بنکەدراوە ڕوویدا: "+err.message,"error");
+      $("logs-container").innerHTML=`<div class="empty-state">نەتوانرا زانیارییەکان بهێنرێن.</div>`;
     });
+  }else{
+    if(unsub){unsub();unsub=null;}allLogs=[];
+    $("app-screen").classList.add("hidden");$("login-screen").classList.remove("hidden");
+  }
+});
 
-    // Modal Open/Close
-    function openModal(log = null) {
-      if (log) {
-        modalTitle.textContent = "دەستکاریکردنی تۆمار";
-        editIdInput.value = log.id;
-        document.getElementById("f-title").value = log.title || "";
-        document.getElementById("f-site").value = log.site || "";
-        document.getElementById("f-date").value = log.date || getTodayISO();
-        document.getElementById("f-system").value = log.system || "PLC";
-        document.getElementById("f-brand").value = log.brand || "";
-        document.getElementById("f-status").value = log.status || "تەواوبوو";
-        document.getElementById("f-details").value = log.details || "";
-        document.getElementById("f-solution").value = log.solution || "";
-        document.getElementById("f-notes").value = log.notes || "";
-      } else {
-        modalTitle.textContent = "تۆمارکردنی کاری نوێ";
-        editIdInput.value = "";
-        logForm.reset();
-        document.getElementById("f-date").value = getTodayISO();
-      }
-      logModal.classList.remove("hidden");
-    }
+const getFiltered=()=>{
+  const q=$("search-input").value.trim().toLowerCase(),sys=$("filter-system").value,st=$("filter-status").value;
+  return allLogs.filter(l=>(!sys||l.system===sys)&&(!st||l.status===st)&&(!q||[l.title,l.site,l.brand,l.details,l.solution,l.notes,l.date].join(" ").toLowerCase().includes(q)));
+};
 
-    function closeModal() {
-      logModal.classList.add("hidden");
-    }
+function renderLogs(){
+  const list=getFiltered();
+  if(!list.length){$("logs-container").innerHTML=`<div class="empty-state">${allLogs.length?"هیچ تۆمارێک لەگەڵ گەڕانەکەت ناگونجێت.":"هێشتا هیچ کارێک تۆمار نەکراوە. کلیک لە (+ تۆماری نوێ) بکە بۆ دەستپێکردن."}</div>`;return;}
+  $("logs-container").innerHTML=list.map(l=>`<article class="log-card" data-id="${esc(l.id)}">
+    <div class="log-top"><div class="log-title">${esc(l.title)}</div><span class="badge ${SC[l.status]||"status-issue"}">${esc(l.status)}</span></div>
+    <div class="log-meta"><span class="meta-pill">📍 ${esc(l.site)}</span><span class="meta-pill">📅 ${esc(l.date)}</span><span class="meta-pill">⚡ ${esc(l.system)}</span>${l.brand?`<span class="meta-pill">🔧 ${esc(l.brand)}</span>`:""}</div>
+    ${l.details?`<div class="log-section"><strong>وردەکاری و کێشە:</strong>${esc(l.details)}</div>`:""}
+    ${l.solution?`<div class="log-section" style="border-right-color:var(--green)"><strong style="color:var(--green)">چارەسەر و پارچە گۆڕدراوەکان:</strong>${esc(l.solution)}</div>`:""}
+    ${l.notes?`<div class="log-section" style="border-right-color:var(--cyan)"><strong style="color:var(--cyan)">تێبینی:</strong>${esc(l.notes)}</div>`:""}
+    <div class="log-actions"><button class="btn btn-pdf btn-sm action-pdf">📄 PDF</button><button class="btn btn-secondary btn-sm action-edit">✏️ دەستکاری</button><button class="btn btn-danger btn-sm action-delete">🗑️ سڕینەوە</button></div>
+  </article>`).join("");
+}
 
-    document.getElementById("btn-open-add").addEventListener("click", () => openModal(null));
-    document.getElementById("btn-close-modal").addEventListener("click", closeModal);
-    document.getElementById("btn-cancel-modal").addEventListener("click", closeModal);
+$("search-input").oninput=$("filter-system").onchange=$("filter-status").onchange=renderLogs;
+$("btn-clear-filters").onclick=()=>{$("search-input").value=$("filter-system").value=$("filter-status").value="";renderLogs();};
 
-    // Save / Update Log
-    logForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      btnSaveLog.disabled = true;
-      btnSaveLog.textContent = "خەزن دەکرێت...";
+function openModal(l=null){
+  $("modal-title").textContent=l?"دەستکاریکردنی تۆمار":"تۆمارکردنی کاری نوێ";
+  $("edit-id").value=l?l.id:"";
+  if(l){const def={date:todayISO(),system:"PLC",status:"تەواوبوو"};FIELDS.forEach(f=>$("f-"+f).value=l[f]||def[f]||"");}
+  else{$("log-form").reset();$("f-date").value=todayISO();}
+  $("log-modal").classList.remove("hidden");
+}
+const closeModal=()=>$("log-modal").classList.add("hidden");
+$("btn-open-add").onclick=()=>openModal();$("btn-close-modal").onclick=$("btn-cancel-modal").onclick=closeModal;
 
-      const payload = {
-        title: document.getElementById("f-title").value.trim(),
-        site: document.getElementById("f-site").value.trim(),
-        date: document.getElementById("f-date").value,
-        system: document.getElementById("f-system").value,
-        brand: document.getElementById("f-brand").value.trim(),
-        status: document.getElementById("f-status").value,
-        details: document.getElementById("f-details").value.trim(),
-        solution: document.getElementById("f-solution").value.trim(),
-        notes: document.getElementById("f-notes").value.trim(),
-        updatedAt: Date.now()
-      };
+$("log-form").addEventListener("submit",async e=>{
+  e.preventDefault();const btn=$("btn-save-log");btn.disabled=true;btn.textContent="خەزن دەکرێت...";
+  const payload={updatedAt:Date.now()};FIELDS.forEach(f=>payload[f]=$("f-"+f).value.trim());
+  const id=$("edit-id").value;
+  try{
+    if(id){await updateDoc(doc(db,"automation_logs",id),payload);showAlert("تۆمارەکە بە سەرکەوتوویی نوێ کرایەوە.");}
+    else{payload.createdAt=Date.now();await addDoc(logsRef,payload);showAlert("کاری نوێ بە سەرکەوتوویی لە هەور خەزن کرا.");}
+    closeModal();
+  }catch(err){console.error(err);showAlert("کێشەیەک لە کاتی خەزنکردن ڕوویدا: "+err.message,"error");}
+  finally{btn.disabled=false;btn.textContent="خەزنکردن لە هەور";}
+});
 
-      const editId = editIdInput.value;
+$("logs-container").addEventListener("click",async e=>{
+  const card=e.target.closest(".log-card"),l=card&&allLogs.find(x=>x.id===card.dataset.id);if(!l)return;
+  if(e.target.closest(".action-edit"))openModal(l);
+  else if(e.target.closest(".action-delete")&&confirm(`دڵنیایت دەتەوێت تۆماری "${l.title}" بسڕیتەوە؟`)){
+    try{await deleteDoc(doc(db,"automation_logs",l.id));showAlert("تۆمارەکە سڕایەوە.");}
+    catch(err){showAlert("نەتوانرا بسڕدرێتەوە: "+err.message,"error");}
+  }else if(e.target.closest(".action-pdf"))openPdf([l],`ڕاپۆرتی تەکنیکی - ${l.title}`,`report-${l.date||"job"}.pdf`);
+});
 
-      try {
-        if (editId) {
-          await updateDoc(doc(db, "automation_logs", editId), payload);
-          showAlert("تۆمارەکە بە سەرکەوتوویی نوێ کرایەوە.");
-        } else {
-          payload.createdAt = Date.now();
-          await addDoc(logsRef, payload);
-          showAlert("کاری نوێ بە سەرکەوتوویی لە هەور خەزن کرا.");
-        }
-        closeModal();
-      } catch (err) {
-        console.error(err);
-        showAlert("کێشەیەک لە کاتی خەزنکردن ڕوویدا: " + err.message, "error");
-      } finally {
-        btnSaveLog.disabled = false;
-        btnSaveLog.textContent = "خەزنکردن لە هەور";
-      }
-    });
+$("btn-export-all-pdf").onclick=()=>{
+  const list=getFiltered();if(!list.length)return showAlert("هیچ تۆمارێک نییە بۆ دروستکردنی PDF.","error");
+  openPdf(list,"ڕاپۆرتی گشتیی کارەکانی ئەندازیاری ئۆتۆمەیشن",`automation-log-${todayISO()}.pdf`);
+};
 
-    // Card Action Buttons (Event Delegation)
-    logsContainer.addEventListener("click", async (e) => {
-      const card = e.target.closest(".log-card");
-      if (!card) return;
-      const id = card.dataset.id;
-      const log = allLogs.find((item) => item.id === id);
-      if (!log) return;
+function openPdf(list,title,name){
+  pdfName=name;
+  $("pdf-paper").innerHTML=`<div class="pdf-header"><div><h1>${esc(title)}</h1><p>سیستەمی تۆماری کار و چاککردنەوەی ئۆتۆمەیشن</p></div><div style="text-align:left;font-size:.8rem;color:#475569"><div><strong>بەرواری دەرچوون:</strong> ${new Date().toLocaleDateString("en-GB")}</div><div><strong>ژمارەی تۆمار:</strong> ${list.length}</div></div></div>
+  ${list.map((l,i)=>`<div class="pdf-entry">
+    <div class="pdf-entry-head"><div class="pdf-entry-title">${list.length>1?i+1+". ":""}${esc(l.title)}</div><span class="pdf-status">${esc(l.status)}</span></div>
+    <div class="pdf-grid"><div class="pdf-field"><b>شوێن / کارگە:</b> ${esc(l.site)}</div><div class="pdf-field"><b>بەروار:</b> ${esc(l.date)}</div><div class="pdf-field"><b>جۆری سیستەم:</b> ${esc(l.system)}</div><div class="pdf-field"><b>براند و مۆدێل:</b> ${esc(l.brand||"دیاری نەکراوە")}</div></div>
+    ${l.details?`<div class="pdf-block"><strong>وردەکاری و کێشە تەکنیکییەکان:</strong>${esc(l.details)}</div>`:""}
+    ${l.solution?`<div class="pdf-block" style="border-right-color:#10b981"><strong>چارەسەر و پارچە گۆڕدراوەکان:</strong>${esc(l.solution)}</div>`:""}
+    ${l.notes?`<div class="pdf-block" style="border-right-color:#06b6d4"><strong>تێبینی و کاری داهاتوو:</strong>${esc(l.notes)}</div>`:""}
+  </div>`).join("")}<div class="pdf-footer">دروستکراوە لە ڕێگەی ئەپی تۆماری ئەندازیاری ئۆتۆمەیشن (Automation Log)</div>`;
+  $("pdf-modal").classList.remove("hidden");
+}
 
-      if (e.target.closest(".action-edit")) {
-        openModal(log);
-      } else if (e.target.closest(".action-delete")) {
-        if (confirm(`دڵنیایت دەتەوێت تۆماری "${log.title}" بسڕیتەوە؟`)) {
-          try {
-            await deleteDoc(doc(db, "automation_logs", id));
-            showAlert("تۆمارەکە سڕایەوە.");
-          } catch (err) {
-            showAlert("نەتوانرا بسڕدرێتەوە: " + err.message, "error");
-          }
-        }
-      } else if (e.target.closest(".action-pdf")) {
-        openPdfPreview([log], `ڕاپۆرتی تەکنیکی - ${log.title}`, `report-${log.date || "job"}.pdf`);
-      }
-    });
-
-    // Export All / Filtered to PDF
-    document.getElementById("btn-export-all-pdf").addEventListener("click", () => {
-      const list = getFilteredLogs();
-      if (list.length === 0) {
-        showAlert("هیچ تۆمارێک نییە بۆ دروستکردنی PDF.", "error");
-        return;
-      }
-      openPdfPreview(list, "ڕاپۆرتی گشتیی کارەکانی ئەندازیاری ئۆتۆمەیشن", `automation-log-${getTodayISO()}.pdf`);
-    });
-
-    function openPdfPreview(logsList, reportTitle, filename) {
-      currentPdfFilename = filename;
-      const today = new Date().toLocaleDateString("en-GB");
-
-      pdfPaper.innerHTML = `
-        <div class="pdf-header">
-          <div>
-            <h1>${escapeHtml(reportTitle)}</h1>
-            <p>سیستەمی تۆماری کار و چاککردنەوەی ئۆتۆمەیشن</p>
-          </div>
-          <div style="text-align:left; font-size:0.8rem; color:#475569;">
-            <div><strong>بەرواری دەرچوون:</strong> ${today}</div>
-            <div><strong>ژمارەی تۆمار:</strong> ${logsList.length}</div>
-          </div>
-        </div>
-
-        ${logsList.map((log, idx) => `
-          <div class="pdf-entry">
-            <div class="pdf-entry-head">
-              <div class="pdf-entry-title">${logsList.length > 1 ? (idx + 1) + ". " : ""}${escapeHtml(log.title)}</div>
-              <span class="pdf-status">${escapeHtml(log.status)}</span>
-            </div>
-            <div class="pdf-grid">
-              <div class="pdf-field"><b>شوێن / کارگە:</b> ${escapeHtml(log.site)}</div>
-              <div class="pdf-field"><b>بەروار:</b> ${escapeHtml(log.date)}</div>
-              <div class="pdf-field"><b>جۆری سیستەم:</b> ${escapeHtml(log.system)}</div>
-              <div class="pdf-field"><b>براند و مۆدێل:</b> ${escapeHtml(log.brand || "دیاری نەکراوە")}</div>
-            </div>
-            ${log.details ? `
-              <div class="pdf-block">
-                <strong>وردەکاری و کێشە تەکنیکییەکان:</strong>
-                ${escapeHtml(log.details)}
-              </div>` : ""}
-            ${log.solution ? `
-              <div class="pdf-block" style="border-right-color:#10b981;">
-                <strong>چارەسەر و پارچە گۆڕدراوەکان:</strong>
-                ${escapeHtml(log.solution)}
-              </div>` : ""}
-            ${log.notes ? `
-              <div class="pdf-block" style="border-right-color:#06b6d4;">
-                <strong>تێبینی و کاری داهاتوو:</strong>
-                ${escapeHtml(log.notes)}
-              </div>` : ""}
-          </div>
-        `).join("")}
-
-        <div class="pdf-footer">
-          دروستکراوە لە ڕێگەی ئەپی تۆماری ئەندازیاری ئۆتۆمەیشن (Automation Log)
-        </div>
-      `;
-
-      pdfModal.classList.remove("hidden");
-    }
-
-    document.getElementById("btn-close-pdf").addEventListener("click", () => {
-      pdfModal.classList.add("hidden");
-    });
-
-    document.getElementById("btn-print-pdf").addEventListener("click", () => {
-      window.print();
-    });
-
-    btnDownloadPdf.addEventListener("click", async () => {
-      btnDownloadPdf.disabled = true;
-      btnDownloadPdf.textContent = "⏳ خەریکی دروستکردنی PDFـە...";
-      try {
-        const opt = {
-          margin: [10, 10, 10, 10],
-          filename: currentPdfFilename,
-          image: { type: "jpeg", quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
-          jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-        };
-        await html2pdf().set(opt).from(pdfPaper).save();
-      } catch (err) {
-        alert("ئەگەر داگرتنە ڕاستەوخۆکە لەم وێبگەڕەدا کاری نەکرد، دوگمەی (چاپکردن) دابگرە و Save as PDF هەڵبژێرە.");
-      } finally {
-        btnDownloadPdf.disabled = false;
-        btnDownloadPdf.textContent = "⬇️ داگرتنی فایلی PDF";
-      }
-    });
-  </script>
+$("btn-close-pdf").onclick=()=>$("pdf-modal").classList.add("hidden");
+$("btn-print-pdf").onclick=()=>window.print();
+$("btn-download-pdf").onclick=async()=>{
+  const btn=$("btn-download-pdf");btn.disabled=true;btn.textContent="⏳ خەریکی دروستکردنی PDFـە...";
+  try{await html2pdf().set({margin:[10,10,10,10],filename:pdfName,image:{type:"jpeg",quality:.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff"},jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}}).from($("pdf-paper")).save();}
+  catch{alert("ئەگەر داگرتنە ڕاستەوخۆکە لەم وێبگەڕەدا کاری نەکرد، دوگمەی (چاپکردن) دابگرە و Save as PDF هەڵبژێرە.");}
+  finally{btn.disabled=false;btn.textContent="⬇️ داگرتنی فایلی PDF";}
+};
+</script>
 </body>
 </html>
